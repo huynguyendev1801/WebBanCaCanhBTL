@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Huy Phuc Aquarium</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="~/Content/Site.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="container py-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="@Url.Action("Index", "Home")" title="Go to Home">
+                <img src="~/Content/Images/logo.png" alt="Logo" width="80" title="Logo">
+            </a>
+            @Html.Partial("_SearchBarPartial")
+            @Html.Partial("_LoginPartial")
+            @Html.Partial("_ShoppingCartPartial")
+        </div>
+    </header>
+    <div class="bg-white py-0">
+        @Html.Partial("_NavbarPartial")
+    </div>
+    <div class="py-0" style="background-color: #e9ecef">
+        @Html.Partial("_BreadcrumbPartial")
+    </div>
+    <main class="container body-content mt-5">
+        @RenderBody()
+        <hr />
+    </main>
+    <!-- Footer -->
+    <footer class="footer bg-light pt-5 pb-3">
+        <div class="container">
+            <div class="row">
+                <!-- About Us -->
+                <div class="col-md-4 mb-3">
+                    <h5>Về Chúng Tôi</h5>
+                    <img src="~/Content/Images/logo-horizontal.png" alt="Huy Phúc Aquarium" class="mb-2" height="40">
+                    <p>Shop cá cảnh Online Huy Phúc chuyên cung cấp các dòng cá cảnh thủy sinh, tép cảnh, cá cảnh nhập khẩu</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Địa chỉ: 57 Lê Thị Siêng, Tân Thông Hội, Củ Chi, Tp.HCM</p>
+                    <p><i class="fas fa-clock"></i> Làm việc từ 8h - 10h30 sáng và 1h - 4h30 chiều</p>
+                    <p><i class="fas fa-phone-alt"></i> Hotline: 0788859370</p>
+                    <p><i class="fas fa-envelope"></i> Email: huyng.1801@gmail.com</p>
+                </div>
+
+                <!-- Customer Support -->
+                <div class="col-md-2 mb-3">
+                    <h5>Hỗ Trợ Khách Hàng</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Tra cứu đơn hàng</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                        <li><a href="#">Chính sách vận chuyển</a></li>
+                    </ul>
+                </div>
+
+                <!-- Learn More -->
+                <div class="col-md-3 mb-3">
+                    <h5>Tìm Hiểu Thêm</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Giới thiệu</a></li>
+                        <li><a href="#">Sản phẩm</a></li>
+                        <li><a href="#">Một số thành tích của trại</a></li>
+                        <li><a href="#">Quy Mô Trang Trại</a></li>
+                        <li><a href="#">Thông Tin Chung</a></li>
+                    </ul>
+                </div>
+
+                <!-- Follow Us -->
+                <div class="col-md-3 mb-3">
+                    <h5>Theo Dõi Huy Phúc Tại</h5>
+                    <p>Trại Cá Cảnh Huy Phúc</p>
+                    <div class="social-icons">
+                        <a href="#" class="text-dark"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-dark"><i class="fab fa-youtube"></i></a>
+                        <a href="#" class="text-dark"><i class="fab fa-zalo"></i></a>
+                        <a href="#" class="text-dark"><i class="fab fa-tiktok"></i></a>
+                        <a href="#" class="text-dark"><i class="fab fa-whatsapp"></i></a>
+                    </div>
+                    <img src="~/Content/Images/logo-da-thong-bao-bo-cong-thuong.webp" alt="Đã Thông Báo Bộ Công Thương" class="img-fluid mt-2">
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <p>© Copyright belong to Huy Phuc Aquarium | Provided by Huy Phuc Dev Team</p>
+        </div>
+    </footer>
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

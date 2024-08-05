@@ -1,0 +1,49 @@
+﻿<nav class="container navbar navbar-expand-lg navbar-light py-0">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+            aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto" id="categoryNav">
+            <li class="nav-item mr-2">
+                <a class="nav-link" href="@Url.Action("Index", "Home")">Trang chủ</a>
+            </li>
+            <li class="nav-item dropdown mr-2">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Sản phẩm
+                </a>
+                <ul class="dropdown-menu" id="productDropdown" aria-labelledby="navbarDropdown">
+                    <!-- Categories will be injected here -->
+                </ul>
+            </li>
+            <li class="nav-item mr-2">
+                <a class="nav-link" href="@Url.Action("News", "Home")">Tin tức</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('@Url.Action("GetCategories", "Home")')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                const productDropdown = document.getElementById('productDropdown');
+                data.forEach(category => {
+                    const listItem = document.createElement('li');
+                    listItem.classList.add('dropdown-item');
+                    listItem.innerHTML = `<a href="@Url.Action("Product", "Home")?categoryId=${category.CategoryId}">${category.CategoryName}</a>`;
+                    productDropdown.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching categories:', error);
+            });
+    });
+</script>

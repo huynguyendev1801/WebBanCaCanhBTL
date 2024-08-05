@@ -1,0 +1,21 @@
+﻿@using Microsoft.AspNet.Identity
+
+
+<div class="d-flex align-items-center">
+    <i class="fa-solid fa-circle-user fa-xl"></i>
+    <div class="ml-3">
+        @if (Request.IsAuthenticated)
+        {
+            using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+            {@Html.AntiForgeryToken()
+            <a class="login-link fw-bold" title="Quản lý tài khoản" href="@Url.Action("Index", "Manage")">@User.Identity.GetUserName()</a>
+            <a class="register-link fw-light fs-1" title="Đăng xuất" href="javascript:document.getElementById('logoutForm').submit()">Đăng xuất</a>
+        }
+    }
+    else
+    {
+        <a id="loginLink" class="login-link fw-bold" title="Đăng nhập" href="@Url.Action("Login", "Account")">Đăng Nhập</a>
+        <a id="registerLink" class="register-link fw-light fs-1" title="Đăng ký" href="@Url.Action("Register", "Account")">Đăng Kí</a>
+    }
+    </div>
+</div>

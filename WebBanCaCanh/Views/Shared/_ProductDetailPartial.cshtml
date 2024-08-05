@@ -1,0 +1,26 @@
+﻿@model WebBanCaCanh.Models.Product
+@{
+    var productImages = Model.ProductImages.ToList();
+}
+@if (Model.IsVisible)
+{
+    <div class="row">
+        <div class="col-md-6">
+            <div class="product-image">
+                @if (productImages != null && productImages.Count > 0)
+                {
+                    <img class="d-block w-100 main-img" src="~/Content/Images/@productImages.First().ImageUrl" alt="Product Image">
+                }
+                else
+                {
+                    <img class="d-block w-100 main-img" src="~/Content/Images/placeholder.png" alt="No Image Available">
+                }
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2 id="productName">@Model.ProductName</h2>
+            @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+            <p class="product-detail-price">@string.Format("{0:#,##0} đ", @Model.Price)</p>
+        </div>
+    </div>
+}

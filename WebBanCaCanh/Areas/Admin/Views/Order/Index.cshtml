@@ -1,0 +1,152 @@
+﻿@model List<WebBanCaCanh.Models.Order>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1 class="mt-5 text-center text-uppercase">Danh sách đơn hàng</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Mã đơn hàng</th>
+            <th>Ngày đặt hàng</th>
+            <th>Người đặt hàng</th>
+            <th>Số điện thoại</th>
+            <th>Thành phố</th>
+            <th>Quận/Huyện</th>
+            <th>Địa chỉ</th>
+            <th>Ghi chú</th>
+            <th>Trạng thái</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.OrderId</td>
+                <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                <td>@order.CustomerName</td>
+                <td>@order.PhoneNumber</td>
+                <td>@order.City</td>
+                <td>@order.District</td>
+                <td>@order.Address</td>
+                <td>@order.Note</td>
+                <td>@order.OrderStatus</td>
+                <td>
+                    <span type="button" class="text-info" data-toggle="modal" data-target="#detailsModal" data-id="@order.OrderId" title="Xem chi tiết">
+                        <i class="fa fa-eye"></i>
+                    </span> |
+                    <span type="button" class="text-primary" data-toggle="modal" data-target="#editStatusModal" data-id="@order.OrderId" data-status="@order.OrderStatus" title="Cập nhật trạng thái">
+                        <i class="fa fa-edit"></i>
+                    </span> |
+                    <span type="button" class="text-danger" data-toggle="modal" data-target="#deleteModal" data-id="@order.OrderId" title="Xóa">
+                        <i class="fa fa-trash"></i>
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Details Modal -->
+<div class="modal fade" id="detailsModal" tabindex="-1" role="dialog" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Chi tiết đơn hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Order Details will be loaded here via AJAX -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Status Modal -->
+<div class="modal fade" id="editStatusModal" tabindex="-1" role="dialog" aria-labelledby="editStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editStatusModalLabel">Cập nhật trạng thái đơn hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editStatusForm" method="post" action="@Url.Action("EditStatus", "Order")">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="OrderId" name="id" value="">
+                    <div class="form-group">
+                        <label for="OrderStatus">Trạng thái</label>
+                        <select id="OrderStatus" name="status" class="form-control">
+                            <option value="Chờ duyệt">Chờ duyệt</option>
+                            <option value="Đã duyệt">Đã duyệt</option>
+                            <option value="Đang giao hàng">Đang giao hàng</option>
+                            <option value="Đã nhận hàng">Đã nhận hàng</option>
+                            <option value="Đã hủy">Đã hủy</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa đơn hàng này?
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm" method="post" action="">
+                    @Html.AntiForgeryToken()
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $('#detailsModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var modal = $(this);
+            modal.find('.modal-body').load('@Url.Action("Details", "Order")', { id: id });
+        });
+
+        $('#editStatusModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var status = button.data('status');
+            var form = $('#editStatusForm');
+            form.find('#OrderId').val(id);
+            form.find('#OrderStatus').val(status);
+        });
+
+        $('#deleteModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var id = button.data('id');
+            var form = $('#deleteForm');
+            form.attr('action', '@Url.Action("DeleteConfirmed", "Order")/' + id);
+        });
+    </script>
+}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

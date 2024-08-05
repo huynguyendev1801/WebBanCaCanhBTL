@@ -1,0 +1,84 @@
+﻿@model WebBanCaCanh.ViewModels.PagedNewsViewModel
+
+<div class="news-container">
+    <h1 class="news-title">Bí quyết nuôi cá cảnh thành công</h1>
+
+    <!-- First News Item -->
+    @if (Model.NewsList.Any())
+    {
+        var firstNews = Model.NewsList.First();
+        <div class="row first-news">
+            <div class="col-md-6">
+                <a href="@Url.Action("NewsDetail", "Home", new { id = firstNews.NewsId })" class="card-link" style="text-decoration: none; color: inherit;">
+                    <img class="img-fluid news-image" src="/Content/Images/@firstNews.ImageUrl" alt="@firstNews.Title">
+                </a>
+            </div>
+            <div class="col-md-6">
+                <a href="@Url.Action("NewsDetail", "Home", new { id = firstNews.NewsId })" class="card-link" style="text-decoration: none; color: inherit;">
+                    <div class="card-body">
+                        <h5 class="card-title">@firstNews.Title</h5>
+                        <p class="card-text">@TruncateText(System.Web.HttpUtility.HtmlDecode(firstNews.Content), 200)</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    }
+
+    <!-- Grid of News Items -->
+    <div class="row">
+        @foreach (var item in Model.NewsList.Skip(1).Take(4))
+        {
+            <div class="col-md-3">
+                <a href="@Url.Action("NewsDetail", "Home", new { id = item.NewsId })" class="card-link" style="text-decoration: none; color: inherit;">
+                    <div class="card mb-3 news-card">
+                        <img class="card-img-top news-image" src="/Content/Images/@item.ImageUrl" alt="@item.Title">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Title</h5>
+                            @TruncateText(System.Web.HttpUtility.HtmlDecode(item.Content), 100)
+                            <p class="card-text"><small class="text-muted">@FormatDate(item.CreatedAt)</small></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-end">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("News", new { page = i })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+@functions {
+    public static string TruncateText(string text, int length)
+    {
+        if (text.Length <= length)
+            return text;
+        else
+            return text.Substring(0, length) + "...";
+    }
+
+    public static string FormatDate(DateTime date)
+    {
+        var dayOfWeek = new Dictionary<DayOfWeek, string>
+    {
+            { DayOfWeek.Sunday, "Chủ Nhật" },
+            { DayOfWeek.Monday, "Thứ Hai" },
+            { DayOfWeek.Tuesday, "Thứ Ba" },
+            { DayOfWeek.Wednesday, "Thứ Tư" },
+            { DayOfWeek.Thursday, "Thứ Năm" },
+            { DayOfWeek.Friday, "Thứ Sáu" },
+            { DayOfWeek.Saturday, "Thứ Bảy" }
+        };
+
+        string formattedDate = $"{dayOfWeek[date.DayOfWeek]}, {date:dd/MM/yyyy}";
+        return formattedDate;
+    }
+}

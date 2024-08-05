@@ -1,0 +1,44 @@
+﻿
+@model WebBanCaCanh.Models.Order
+
+<div>
+    <h4>Thông tin đơn hàng</h4>
+    <p><strong>Mã đơn hàng:</strong> @Model.OrderId</p>
+    <p><strong>Ngày đặt hàng:</strong> @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</p>
+    <p><strong>Người đặt hàng:</strong> @Model.CustomerName</p>
+    <p><strong>Số điện thoại:</strong> @Model.PhoneNumber</p>
+    <p><strong>Thành phố:</strong> @Model.City</p>
+    <p><strong>Quận/Huyện:</strong> @Model.District</p>
+    <p><strong>Địa chỉ:</strong> @Model.Address</p>
+    <p><strong>Ghi chú:</strong> @Model.Note</p>
+    <p><strong>Trạng thái:</strong> @Model.OrderStatus</p>
+
+    <h4>Chi tiết sản phẩm</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Hình ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var detail in Model.OrderDetails)
+            {
+                <tr>
+                    <td>
+                        @{
+                            var productImage = detail.Product.ProductImages.FirstOrDefault();
+                            var imageUrl = productImage != null ? productImage.ImageUrl : "~/Content/Images/placeholder.png";
+                        }
+                        <img src="~/Content/Images/@Url.Content(imageUrl)" alt="@detail.Product.ProductName" height="40" />
+                    </td>
+                    <td>@detail.Product.ProductName</td>
+                    <td>@detail.Quantity</td>
+                    <td>@string.Format("{0:#,##0} đ", detail.UnitPrice)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

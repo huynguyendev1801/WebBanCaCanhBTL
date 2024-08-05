@@ -1,0 +1,29 @@
+﻿<div class="container">
+    <div id="breadcrumb-container"></div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var pageType = '@ViewContext.RouteData.Values["action"]'.toLowerCase(); // Get the current action name
+        var itemId = '@ViewBag.ItemId'; // This should be set in your controller to indicate the relevant item ID, if any
+
+        fetch(`@Url.Action("GetBreadcrumb", "Home")?pageType=${pageType}&id=${itemId}`)
+            .then(response => response.json())
+            .then(data => {
+                var breadcrumbContainer = document.getElementById('breadcrumb-container');
+                var breadcrumbHtml = '<nav aria-label="breadcrumb"><ol class="breadcrumb">';
+
+                data.Breadcrumbs.forEach(function (breadcrumb) {
+                    if (breadcrumb.IsActive) {
+                        breadcrumbHtml += `<li class="breadcrumb-item active" aria-current="page">${breadcrumb.Title}</li>`;
+                    } else {
+                        breadcrumbHtml += `<li class="breadcrumb-item"><a href="${breadcrumb.Url}">${breadcrumb.Title}</a></li>`;
+                    }
+                });
+
+                breadcrumbHtml += '</ol></nav>';
+                breadcrumbContainer.innerHTML = breadcrumbHtml;
+            })
+            .catch(error => console.error('Error fetching breadcrumbs:', error));
+    });
+</script>

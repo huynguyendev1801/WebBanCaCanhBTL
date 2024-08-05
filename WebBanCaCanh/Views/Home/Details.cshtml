@@ -1,0 +1,251 @@
+﻿@model WebBanCaCanh.Models.Product
+
+@{
+    ViewBag.Title = "Product Detail";
+    var productImages = Model.ProductImages.ToList();
+}
+
+<div class="product-detail-container mt-5">
+    <div class="row">
+        <div class="col-md-6">
+            <div id="productImageCarousel" class="carousel">
+                <div class="carousel-inner-main">
+                    @if (productImages != null && productImages.Count > 0)
+                    {
+                        foreach (var image in productImages)
+                        {
+                            <div class="carousel-item-main">
+                                <img class="d-block w-100 main-img" src="~/Content/Images/@image.ImageUrl" alt="Product Image">
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="carousel-item-main">
+                            <img class="d-block w-100 main-img" src="~/Content/Images/placeholder.png" alt="No Image Available">
+                        </div>
+                    }
+                </div>
+                <button class="carousel-control-prev" type="button">&#10094;</button>
+                <button class="carousel-control-next" type="button">&#10095;</button>
+            </div>
+
+            <div class="mt-3">
+                <div id="thumbnailCarousel" class="carousel-thumbnails">
+                    <div class="carousel-inner-thumbnails">
+                        @if (productImages != null && productImages.Count > 0)
+                        {
+                            for (int i = 0; i < productImages.Count; i++)
+                            {
+                                var image = productImages[i];
+                                <div class="carousel-thumbnails-item col-3">
+                                    <img class="img-thumbnail clickable-thumbnail @(i == 0 ? "selected" : "")" src="~/Content/Images/@image.ImageUrl" alt="Product Thumbnail" data-index="@i">
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <h2 id="productName">@Model.ProductName</h2>
+            @Html.Raw(System.Web.HttpUtility.HtmlDecode(Model.Description))
+            <p class="product-detail-price">@string.Format("{0:#,##0} đ", @Model.Price)</p>
+            <form id="addToCartForm" action="@Url.Action("AddToCart", "Home")" method="POST">
+                <div class="form-group">
+                    <input type="hidden" name="productId" value="@Model.ProductId">
+                    <div class="quantity-container">
+                        <label for="quantity">Số lượng:</label>
+                        <div class="input-group mb-3">
+                            <button type="button" class="btn btn-outline-secondary" id="decreaseQty">-</button>
+                            <input type="text" id="quantity" class="form-control input-quantity" name="quantity" value="1" pattern="[0-9]*" title="Please enter a number" inputmode="numeric">
+                            <button type="button" class="btn btn-outline-secondary" id="increaseQty">+</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" id="btn-add-to-cart" class="add-to-cart-btn btn btn-danger btn-block" name="btn-add-to-cart">Thêm vào giỏ hàng</button>
+            </form>
+
+            <div class="product-single__policy">
+                <div class="product-policy">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="product-policy__item">
+                                <div class="product-policy__icon">
+                                    <i class="fas fa-wrench"></i>
+                                </div>
+                                <span class="product-policy__title">
+                                    Tư vấn miễn phí
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-policy__item">
+                                <div class="product-policy__icon">
+                                    <i class="fas fa-shipping-fast"></i>
+                                </div>
+                                <span class="product-policy__title">
+                                    Miễn phí vận chuyển toàn quốc<br> cho đơn hàng từ 150k
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-policy__item">
+                                <div class="product-policy__icon">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <span class="product-policy__title">
+                                    Đổi trả dễ dàng <br>  (trong vòng 7 ngày)
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-policy__item">
+                                <div class="product-policy__icon">
+                                    <i class="fas fa-phone"></i>
+                                </div>
+                                <span class="product-policy__title">
+                                    Hotline 1234.567.890<br>
+                                    hỗ trợ từ 8h30-21h30
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-policy__item">
+                                <div class="product-policy__icon">
+                                    <i class="fas fa-truck"></i>
+                                </div>
+                                <span class="product-policy__title">
+                                    Giao hàng tận nơi,<br> nhận hàng xong thanh toán
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-policy__item">
+                                <div class="product-policy__icon">
+                                    <i class="fas fa-certificate"></i>
+                                </div>
+                                <span class="product-policy__title">
+                                    Ưu đãi tích điểm và <br>hưởng quyền lợi thành viên
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="relative-product-container">
+    <h2>Sản phẩm liên quan</h2>
+    <div id="relativeProduct" class="row">
+        @foreach (var relatedProduct in ViewBag.RelativeProducts)
+        {
+            @Html.Partial("_ProductCardPartial", (object)relatedProduct)
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mainCarousel = document.getElementById('productImageCarousel');
+            const mainImages = mainCarousel.querySelectorAll('.carousel-item-main');
+            const thumbnailCarousel = document.getElementById('thumbnailCarousel');
+            const thumbnails = thumbnailCarousel.querySelectorAll('.clickable-thumbnail');
+            const prevButton = mainCarousel.querySelector('.carousel-control-prev');
+            const nextButton = mainCarousel.querySelector('.carousel-control-next');
+            const thumbnailWrapper = thumbnailCarousel.querySelector('.carousel-inner-thumbnails');
+
+            let currentIndex = 0;
+            let thumbIndex = 0;
+            const thumbnailsPerPage = 4;
+
+            function updateCarousel() {
+                const offset = -currentIndex * 100;
+                mainCarousel.querySelector('.carousel-inner-main').style.transform = `translateX(${offset}%)`;
+
+                thumbnails.forEach((thumb, index) => {
+                    thumb.classList.toggle('selected', index === currentIndex);
+                });
+
+                prevButton.style.display = currentIndex === 0 ? 'none' : 'flex';
+                nextButton.style.display = currentIndex === mainImages.length - 1 ? 'none' : 'flex';
+            }
+
+            function showSlide(index) {
+                currentIndex = index;
+                updateCarousel();
+                scrollThumbnails(index);
+            }
+
+            function scrollThumbnails(index) {
+                const thumbnailPage = Math.floor(index / thumbnailsPerPage);
+                const thumbOffset = -thumbnailPage * 100;
+                thumbnailWrapper.style.transform = `translateX(${thumbOffset}%)`;
+            }
+
+            prevButton.addEventListener('click', () => {
+                if (currentIndex > 0) {
+                    showSlide(currentIndex - 1);
+                }
+            });
+
+            nextButton.addEventListener('click', () => {
+                if (currentIndex < mainImages.length - 1) {
+                    showSlide(currentIndex + 1);
+                }
+            });
+
+            thumbnails.forEach((thumbnail, index) => {
+                thumbnail.addEventListener('click', () => {
+                    showSlide(index);
+                });
+            });
+
+            // Initialize the carousel
+            updateCarousel();
+            scrollThumbnails(0);
+
+            const quantityInput = document.getElementById('quantity');
+            const increaseBtn = document.getElementById('increaseQty');
+            const decreaseBtn = document.getElementById('decreaseQty');
+
+            increaseBtn.addEventListener('click', function () {
+                let currentValue = parseInt(quantityInput.value);
+                if (!isNaN(currentValue)) {
+                    quantityInput.value = currentValue + 1;
+                }
+            });
+
+            decreaseBtn.addEventListener('click', function () {
+                let currentValue = parseInt(quantityInput.value);
+                if (!isNaN(currentValue) && currentValue > 1) {
+                    quantityInput.value = currentValue - 1;
+                }
+            });
+
+            quantityInput.addEventListener('input', function () {
+                let currentValue = parseInt(quantityInput.value);
+                if (isNaN(currentValue) || currentValue < 1) {
+                    quantityInput.value = 1;
+                }
+            });
+
+            quantityInput.addEventListener('keypress', function (e) {
+                if (e.key < '0' || e.key > '9') {
+                    e.preventDefault();
+                }
+            });
+
+            quantityInput.addEventListener('blur', function () {
+                if (quantityInput.value === '' || parseInt(quantityInput.value) < 1) {
+                    quantityInput.value = 1;
+                }
+            });
+        });
+    </script>
+}
+

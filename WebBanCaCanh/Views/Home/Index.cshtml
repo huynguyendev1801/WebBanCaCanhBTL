@@ -1,0 +1,227 @@
+﻿@model List<WebBanCaCanh.Models.Category>
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="banner-slideshow">
+    <div class="banner-container">
+        @if (ViewBag.Banners.Count > 0)
+        {
+            var lastBanner = ViewBag.Banners[ViewBag.Banners.Count - 1];
+            if (lastBanner.IsVisible)
+            {
+                <div class="banner">
+                    <img src="/Content/Images/@lastBanner.ImageUrl" alt="@lastBanner.Content" />
+                </div>
+            }
+        }
+
+        @foreach (var banner in ViewBag.Banners)
+        {
+            if (banner.IsVisible)
+            {
+                <div class="banner">
+                    <img src="/Content/Images/@banner.ImageUrl" alt="@banner.Content" />
+                </div>
+            }
+        }
+
+        @if (ViewBag.Banners.Count > 0)
+        {
+            var firstBanner = ViewBag.Banners[0];
+            if (firstBanner.IsVisible)
+            {
+                <div class="banner">
+                    <img src="/Content/Images/@firstBanner.ImageUrl" alt="@firstBanner.Content" />
+                </div>
+            }
+        }
+    </div>
+    <button class="prev" onclick="changeSlide(-1)">&#10094;</button>
+    <button class="next" onclick="changeSlide(1)">&#10095;</button>
+    <div class="dot-container">
+        @for (int i = 0; i < ViewBag.Banners.Count; i++)
+        {
+            <span class="dot" data-slide-to="@i" onclick="currentSlide(@i)"></span>
+        }
+    </div>
+</div>
+
+
+<div class="category-circle my-5">
+    @foreach (var category in Model)
+    {
+        <a href="@Url.Action("Product", "Home", new { categoryId = category.CategoryId })" class="category-circle-item" data-caption="@category.CategoryName">
+            <img src="~/Content/Images/@category.ImageUrl" alt="@category.CategoryName">
+            <span class="category-circle-caption">@category.CategoryName</span>
+        </a>
+    }
+</div>
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    var category = Model[i];
+    <section id="@category.CategoryId" class="selection-category">
+
+        <a href="@Url.Action("Product", "Home", new { categoryId = category.CategoryId })">
+            <h2>@category.CategoryName</h2>
+        </a>
+        <div class="row">
+            @foreach (var product in category.Products)
+            {
+                @Html.Partial("_ProductCardPartial", product)
+               
+            }
+        </div>
+        <!-- Add "See All" button -->
+        <div class="d-flex justify-content-center align-items-center mt-3">
+            <a href="@Url.Action("Product", "Home", new { categoryId = category.CategoryId })" class="btn-see-all">Xem tất cả <i class="fa-solid fa-chevron-right"></i></a>
+        </div>
+    </section>
+}
+
+@{
+    var newsList = ViewBag.News as List<WebBanCaCanh.Models.News>;
+}
+
+<div class="news-container mt-4">
+    <div class="d-flex justify-content-between">
+        <a href="@Url.Action("News", "Home")">
+            <h2>Blog Cá Cảnh</h2>
+        </a>
+        <a href="@Url.Action("News", "Home")" class="btn-see-all">Xem tất cả <i class="fa-solid fa-chevron-right"></i></a>
+    </div>
+    @if (newsList != null && newsList.Count > 0)
+    {
+        <div id="newsCarousel" class="carousel-news fade-carousel slide mt-4" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (int i = 0; i < newsList.Count; i++)
+                {
+                    var newsItem = newsList[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "") fade-carousel-item d-flex">
+                        <div class="col-md-6 pr-3">
+                            <img src="~/Content/Images/@newsItem.ImageUrl" class="d-block w-100" alt="@newsItem.Title" style="border-radius: 10px;">
+                        </div>
+                        <div class="col-md-6 d-flex flex-column justify-content-center carousel-item-right">
+                            <h3 class="news-title" onclick="window.location.href='@Url.Action("NewsDetail", "Home", new { id = newsItem.NewsId })'">@newsItem.Title</h3>
+                            <p class="news-description">@Html.Raw(newsItem.Content)</p>
+                            <a href="@Url.Action("NewsDetail", "Home", new { id = newsItem.NewsId })" class="btn-detail">Xem chi tiết</a>
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#newsCarousel" data-bs-slide="prev">
+                &#10094;
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#newsCarousel" data-bs-slide="next">
+                &#10095;
+            </button>
+        </div>
+    }
+</div>
+
+
+
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            let slideIndex = 1;
+            const slides = document.querySelectorAll(".banner");
+            const dots = document.querySelectorAll(".dot");
+            const container = document.querySelector(".banner-container");
+            const totalSlides = slides.length;
+            const originalSlidesCount = totalSlides - 2;
+
+            container.style.transform = `translateX(${-slideIndex * 100}%)`;
+
+            function showSlides(index) {
+                slideIndex = index;
+
+                if (slideIndex >= totalSlides) {
+                    container.style.transition = 'none';
+                    slideIndex = 1;
+                    container.style.transform = `translateX(${-slideIndex * 100}%)`;
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            container.style.transition = 'transform 0.5s ease-in-out';
+                            slideIndex++;
+                            container.style.transform = `translateX(${-slideIndex * 100}%)`;
+                        });
+                    });
+                } else if (slideIndex < 0) {
+                    container.style.transition = 'none';
+                    slideIndex = totalSlides - 2;
+                    container.style.transform = `translateX(${-slideIndex * 100}%)`;
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            container.style.transition = 'transform 0.5s ease-in-out';
+                            slideIndex--;
+                            container.style.transform = `translateX(${-slideIndex * 100}%)`;
+                        });
+                    });
+                } else {
+                    container.style.transition = 'transform 0.5s ease-in-out';
+                    container.style.transform = `translateX(${-slideIndex * 100}%)`;
+                }
+
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle("active", i === ((slideIndex - 1 + originalSlidesCount) % originalSlidesCount));
+                });
+            }
+
+            document.querySelector(".prev").addEventListener("click", function () {
+                showSlides(slideIndex - 1);
+            });
+
+            document.querySelector(".next").addEventListener("click", function () {
+                showSlides(slideIndex + 1);
+            });
+
+            dots.forEach((dot, index) => {
+                dot.addEventListener("click", function () {
+                    showSlides(index + 1);
+                });
+            });
+
+            setInterval(function () {
+                showSlides(slideIndex + 1);
+            }, 6000);
+
+            const items = document.querySelectorAll('.category-circle .category-circle-item img');
+
+            items.forEach(item => {
+                item.addEventListener('mouseover', function () {
+                    let angle = 0;
+                    const interval = setInterval(() => {
+                        angle += 10;
+                        if (angle >= 360) angle = 0;
+                        item.style.background = `linear-gradient(${angle}deg, red, orange, yellow, green, blue, indigo, violet) border-box`;
+                        item.style.backgroundClip = 'border-box';
+                    }, 100);
+
+                    item.addEventListener('mouseleave', function () {
+                        clearInterval(interval);
+                        item.style.background = '';
+                        item.style.backgroundClip = '';
+                    });
+                });
+            });
+
+            const carousel = document.getElementById('newsCarousel');
+            if (carousel) {
+                const bsCarousel = new bootstrap.Carousel(carousel, {
+                    interval: 5000,
+                    ride: 'carousel'
+                });
+
+                document.querySelector('.carousel-control-prev').addEventListener('click', function () {
+                    bsCarousel.prev();
+                });
+
+                document.querySelector('.carousel-control-next').addEventListener('click', function () {
+                    bsCarousel.next();
+                });
+            }
+        });
+    </script>
+}

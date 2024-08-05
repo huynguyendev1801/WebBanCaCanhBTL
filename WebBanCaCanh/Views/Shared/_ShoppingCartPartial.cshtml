@@ -1,0 +1,31 @@
+﻿<div class="cart-header-container">
+    <a href="/Home/Cart" class="cart-link">
+        <i class="fas fa-shopping-bag cart-icon fa-xl"></i>
+        <span class="cart-text">Giỏ Hàng</span>
+        <span id="cartItemCount" class="cart-badge">0</span>
+    </a>
+    <!-- Thêm các nội dung khác tại đây nếu cần -->
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch('@Url.Action("GetTotalQuantity", "Home")')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    const cartItemCount = document.getElementById('cartItemCount');
+                    cartItemCount.textContent = data.totalQuantity;
+                } else {
+                    console.error(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching total quantity:', error);
+            });
+    });
+    </script>

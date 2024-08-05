@@ -1,0 +1,48 @@
+﻿@model WebBanCaCanh.ViewModels.NewsDetailViewModel
+
+@{
+    ViewBag.Title = Model.News.Title;
+}
+
+<div class="new-detail-container mt-4">
+    <div class="row">
+        <!-- Categories Sidebar -->
+        <div class="col-md-3">
+            <h4 class="category-title">Các dòng cá cảnh</h4>
+            <ul class="list-group mb-4">
+                @foreach (var category in Model.Categories)
+                {
+                    <li class="list-group-item">
+                        <a href="@Url.Action("Product", "Home", new { id = category.CategoryId })">@category.CategoryName</a>
+                    </li>
+                }
+            </ul>
+
+            <h4 class="related-news-title">Tin tức liên quan</h4>
+            <ul class="list-group">
+                @foreach (var relatedNews in Model.RelatedNews)
+                {
+                    <li class="list-group-item">
+                        <a href="@Url.Action("NewsDetail", "Home", new { id = relatedNews.NewsId })">
+                            <img src="/Content/Images/@relatedNews.ImageUrl" alt="@relatedNews.Title" class="img-fluid">
+                            <p>@relatedNews.Title</p>
+                        </a>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        <!-- News Detail -->
+        <div class="col-md-9">
+            <h1>@Model.News.Title</h1>
+            <p class="text-muted">Đăng ngày @Model.News.CreatedAt.ToString("dddd, dd/MM/yyyy")</p>
+            <div class="card mb-4">
+                <img class="card-img-top mx-auto d-block" src="/Content/Images/@Model.News.ImageUrl" alt="@Model.News.Title">
+                <div class="card-body">
+                    <p class="card-text">@Html.Raw(Model.News.Content)</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

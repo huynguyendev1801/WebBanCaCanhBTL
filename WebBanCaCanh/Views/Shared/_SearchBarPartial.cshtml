@@ -1,0 +1,43 @@
+﻿<div class="search-container">
+    @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { @class = "w-100", id = "searchForm" }))
+    {
+        <div class="input-group search-form">
+            <input type="search" class="form-control" id="searchInput" name="query" placeholder="Nhập vào ô tìm kiếm...." title="Nhập từ khóa tìm kiếm">
+            <button type="submit" class="btn-search" id="btn-search" title="Tìm kiếm">
+                <i class="fas fa-search fa-lg"></i>
+            </button>
+        </div>
+    }
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const placeholders = ["Tìm kiếm cá cảnh", "thức ăn cá"];
+        let currentPhraseIndex = 0;
+        let currentIndex = 0;
+
+        function typePlaceholder() {
+            if (currentIndex < placeholders[currentPhraseIndex].length) {
+                searchInput.placeholder += placeholders[currentPhraseIndex].charAt(currentIndex);
+                currentIndex++;
+                setTimeout(typePlaceholder, 100);
+            } else {
+                setTimeout(deletePlaceholder, 1000);
+            }
+        }
+
+        function deletePlaceholder() {
+            if (currentIndex > 0) {
+                searchInput.placeholder = searchInput.placeholder.slice(0, -1);
+                currentIndex--;
+                setTimeout(deletePlaceholder, 50);
+            } else {
+                currentPhraseIndex = (currentPhraseIndex + 1) % placeholders.length;
+                setTimeout(typePlaceholder, 200);
+            }
+        }
+
+        searchInput.placeholder = "";
+        typePlaceholder();
+    });
+</script>

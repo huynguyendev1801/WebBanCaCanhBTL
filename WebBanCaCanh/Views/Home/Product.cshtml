@@ -1,0 +1,32 @@
+﻿@model WebBanCaCanh.Models.Category
+
+@{
+    ViewBag.Title = "Product";
+    var currentSort = ViewBag.CurrentSort as string;
+}
+
+<div class="product-category-container">
+    @if (Model != null)
+    {
+        <h2>@Model.CategoryName</h2>
+        <div class="sort-options d-flex align-items-center">
+            <span class="mr-2">Sắp xếp:</span>
+            <a class="sort-link @(currentSort == "name_asc" ? "active" : "")" href="@Url.Action("Product", "Home", new { categoryId = Model.CategoryId, sortBy = "name_asc" })">Tên A → Z</a>
+            <a class="sort-link @(currentSort == "name_desc" ? "active" : "")" href="@Url.Action("Product", "Home", new { categoryId = Model.CategoryId, sortBy = "name_desc" })">Tên Z → A</a>
+            <a class="sort-link @(currentSort == "price_asc" ? "active" : "")" href="@Url.Action("Product", "Home", new { categoryId = Model.CategoryId, sortBy = "price_asc" })">Giá tăng dần</a>
+            <a class="sort-link @(currentSort == "price_desc" ? "active" : "")" href="@Url.Action("Product", "Home", new { categoryId = Model.CategoryId, sortBy = "price_desc" })">Giá giảm dần</a>
+            <a class="sort-link @(currentSort == "newest" ? "active" : "")" href="@Url.Action("Product", "Home", new { categoryId = Model.CategoryId, sortBy = "newest" })">Hàng mới</a>
+        </div>
+
+        <div class="row mt-3">
+            @foreach (var product in Model.Products)
+            {
+                @Html.Partial("_ProductCardPartial", product)
+            }
+        </div>
+    }
+    else
+    {
+        <p>Không tìm thấy sản phẩm.</p>
+    }
+</div>
